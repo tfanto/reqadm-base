@@ -88,8 +88,8 @@ public class TopicService {
 		return ret;
 	}
 
-	public boolean exists(TopicRec topic) {
-		ServiceHelper.validate(topic);
+	public boolean exists(TopicKey key) {
+		ServiceHelper.validate(key);
 
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -101,10 +101,10 @@ public class TopicService {
 			connection = Db.open();
 			if (connection != null) {
 				stmt = connection.prepareStatement(theSQL);
-				stmt.setString(1, topic.key.tenantid);
-				stmt.setInt(2, topic.key.version);
-				stmt.setString(3, topic.key.productName);
-				stmt.setString(4, topic.key.topicName);
+				stmt.setString(1, key.tenantid);
+				stmt.setInt(2, key.version);
+				stmt.setString(3, key.productName);
+				stmt.setString(4, key.topicName);
 				rs = stmt.executeQuery();
 				rs.next();
 				Integer n = rs.getInt(1);
@@ -152,11 +152,8 @@ public class TopicService {
 		return false;
 	}
 
-	public TopicRec get(String tenantid, Integer version, String productName, String topicName) {
-		ServiceHelper.validate("Tenant", tenantid);
-		ServiceHelper.validate("Version", version);
-		ServiceHelper.validate("Product", productName);
-		ServiceHelper.validate("Topic", topicName);
+	public TopicRec get(TopicKey key) {
+		ServiceHelper.validate(key);
 
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -169,10 +166,10 @@ public class TopicService {
 			connection = Db.open();
 			if (connection != null) {
 				stmt = connection.prepareStatement(theSQL);
-				stmt.setString(1, tenantid);
-				stmt.setInt(2, version);
-				stmt.setString(3, productName);
-				stmt.setString(4, topicName);
+				stmt.setString(1, key.tenantid);
+				stmt.setInt(2, key.version);
+				stmt.setString(3, key.productName);
+				stmt.setString(4, key.topicName);
 				rs = stmt.executeQuery();
 				if (rs.next()) {
 
@@ -192,8 +189,8 @@ public class TopicService {
 					String rs_productname = rs.getString("productname");
 					String rs_topicname = rs.getString("topicname");
 
-					TopicKey key = new TopicKey(rs_tenantid, rs_version, rs_productname, rs_topicname);
-					rec = new TopicRec(key, rs_description, rs_crtdat, rs_chgnbr);
+					TopicKey rs_key = new TopicKey(rs_tenantid, rs_version, rs_productname, rs_topicname);
+					rec = new TopicRec(rs_key, rs_description, rs_crtdat, rs_chgnbr);
 					rec.shortdescr = rs_shortdescr;
 					rec.crtusr = rs_crtusr;
 					rec.chgdat = rs_chgdat;
@@ -226,17 +223,16 @@ public class TopicService {
 			LOGGER.info("Record is marked for delete. No Action.");
 			return null;
 		}
-		
+
 		if (isParentDeleteMarked(topic.key)) {
 			LOGGER.info(Cst.PARENT_IS_DELETE_NO_ACTION);
 			return null;
 		}
 
-
 		topic.shortdescr = ServiceHelper.ensureStringLength(topic.shortdescr, 100);
 		topic.description = ServiceHelper.ensureStringLength(topic.description, 995);
 
-		if (!exists(topic)) {
+		if (!exists(topic.key)) {
 			insert(topic, loggedInUserId);
 		} else {
 			update(topic, loggedInUserId);
@@ -284,7 +280,7 @@ public class TopicService {
 		try {
 			connection = Db.open();
 			if (connection != null) {
-				TopicRec dbRec = get(topic.key.tenantid, topic.key.version, topic.key.productName, topic.key.topicName);
+				TopicRec dbRec = get(topic.key);
 				if (dbRec == null) {
 					return 0;
 				}
@@ -317,22 +313,18 @@ public class TopicService {
 		return null;
 	}
 
-	public void remove(String tenantid, Integer version, String productName, String topicName, String userId) {
-		ServiceHelper.validate("Tenant", tenantid);
-		ServiceHelper.validate("Version", version);
-		ServiceHelper.validate("Product", productName);
-		ServiceHelper.validate("Topic", topicName);
+	public void remove(TopicKey key, String userId) {
+		ServiceHelper.validate(key);
 		ServiceHelper.validate("Userid", userId);
 		Connection connection = null;
 		PreparedStatement stmt = null;
 
-		if (ProductService.isLocked(tenantid, version, productName)) {
-			LOGGER.info("LOCKED " + tenantid + "  " + version + " " + productName);
+		if (ProductService.isLocked(key.tenantid, key.version, key.productName)) {
+			LOGGER.info("LOCKED " + key.tenantid + "  " + key.version + " " + key.productName);
 			return;
 		}
 
 		// already done we dont want to change the delete date
-		TopicKey key = new TopicKey(tenantid, version, productName, topicName);
 		if (isDeleteMarked(key)) {
 			LOGGER.info("Record is already marked for delete. No Action.");
 			return;
@@ -345,12 +337,12 @@ public class TopicService {
 
 				stmt = connection.prepareStatement("update topic set dltdat=now(), chgnbr = chgnbr + 1, dltusr=? where productname=? and topicname=? and version=? and tenantid=?");
 				stmt.setString(1, userId);
-				stmt.setString(2, productName);
-				stmt.setString(3, topicName);
-				stmt.setInt(4, version);
-				stmt.setString(5, tenantid);
+				stmt.setString(2, key.productName);
+				stmt.setString(3, key.topicName);
+				stmt.setInt(4, key.version);
+				stmt.setString(5, key.tenantid);
 				stmt.executeUpdate();
-				deleteAllDependencies(connection, tenantid, version, productName, topicName, userId);
+				deleteAllDependencies(connection, key, userId);
 				connection.commit();
 			}
 		} catch (SQLException e) {
@@ -365,7 +357,7 @@ public class TopicService {
 		}
 	}
 
-	private void deleteAllDependencies(Connection connection, String tenantid, Integer version, String productName, String topicName, String userId) throws SQLException {
+	private void deleteAllDependencies(Connection connection, TopicKey key, String userId) throws SQLException {
 
 		PreparedStatement stmtProcess = null;
 		PreparedStatement stmtOperation = null;
@@ -373,16 +365,16 @@ public class TopicService {
 		try {
 			stmtProcess = connection.prepareStatement("update process set dltdat=now(), chgnbr = chgnbr + 1, dltusr=? where productname=? and topicname=? and version=? and tenantid=?");
 			stmtProcess.setString(1, userId);
-			stmtProcess.setString(2, productName);
-			stmtProcess.setString(3, topicName);
-			stmtProcess.setInt(4, version);
-			stmtProcess.setString(5, tenantid);
+			stmtProcess.setString(2, key.productName);
+			stmtProcess.setString(3, key.topicName);
+			stmtProcess.setInt(4, key.version);
+			stmtProcess.setString(5, key.tenantid);
 			stmtOperation = connection.prepareStatement("update oper set dltdat=now(), chgnbr = chgnbr + 1, dltusr=? where productname=? and topicname=? and version=? and tenantid=?");
 			stmtOperation.setString(1, userId);
-			stmtOperation.setString(2, productName);
-			stmtOperation.setString(3, topicName);
-			stmtOperation.setInt(4, version);
-			stmtOperation.setString(5, tenantid);
+			stmtOperation.setString(2, key.productName);
+			stmtOperation.setString(3, key.topicName);
+			stmtOperation.setInt(4, key.version);
+			stmtOperation.setString(5, key.tenantid);
 
 			stmtProcess.executeUpdate();
 			stmtOperation.executeUpdate();
