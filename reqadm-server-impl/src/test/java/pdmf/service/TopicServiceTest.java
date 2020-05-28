@@ -62,31 +62,32 @@ public class TopicServiceTest extends TestHelper {
 
 	@Test
 	public void get() {
-		topicService.remove(tenant, version, productName, topicName, "test");
-		TopicRec rec = topicService.get(tenant,version, productName, topicName);
+		TopicKey key = new TopicKey(tenant, version, productName, topicName);
+		topicService.remove(key, "test");
+		TopicRec rec = topicService.get(key);
 		Assert.assertTrue(rec.dltusr != null);
 	}
 
 	@Test
 	public void getFail() {
-		TopicRec rec = topicService.get(tenant,version, productName, topicName);
+		TopicKey key = new TopicKey(tenant, version, productName, topicName);
+		TopicRec rec = topicService.get(key);
 		Assert.assertEquals("customer", rec.key.topicName);
 	}
 
 	@Test
 	public void exist() {
 		TopicKey key = new TopicKey(tenant, version, productName, topicName);
-		TopicRec rec = new TopicRec(key, null, null, null);
-		Boolean exists = topicService.exists(rec);
+		Boolean exists = topicService.exists(key);
 		Assert.assertTrue(exists);
 	}
 
 	@Test
 	public void existFail() {
 
-		topicService.remove(tenant, version, productName, topicName, "test");
-
 		TopicKey key = new TopicKey(tenant, version, productName, topicName);
+		topicService.remove(key, "test");
+
 		Boolean ok = topicService.isDeleteMarked(key);
 		Assert.assertTrue(ok);
 	}
@@ -94,24 +95,25 @@ public class TopicServiceTest extends TestHelper {
 	@Test
 	public void storeNew() {
 
-		topicService.remove(tenant, version, productName, topicName, "test");
-
 		TopicKey key = new TopicKey(tenant, version, productName, topicName);
+		topicService.remove(key, "test");
+
 		TopicRec rec = new TopicRec(key, "aNewRecord", null, null);
 		rec.shortdescr = "kort";
 		topicService.store(rec, "test");
-		TopicRec fetched = topicService.get(tenant, version, productName, topicName);
+		TopicRec fetched = topicService.get(key);
 		Assert.assertNotNull(fetched);
 
 	}
 
 	@Test
 	public void storeExisting() {
+		TopicKey key = new TopicKey(tenant, version, productName, topicName);
 
-		TopicRec fetched = topicService.get(tenant, version, productName, topicName);
+		TopicRec fetched = topicService.get(key);
 		fetched.description = "CHANGED";
 		topicService.store(fetched, "test");
-		fetched = topicService.get(tenant, version, productName, topicName);
+		fetched = topicService.get(key);
 
 		Assert.assertNotNull(fetched);
 		Assert.assertEquals("CHANGED", fetched.description);
@@ -121,9 +123,9 @@ public class TopicServiceTest extends TestHelper {
 	@Test
 	public void removeExisting() {
 
-		topicService.remove(tenant, version, productName, topicName, "test");
-
 		TopicKey key = new TopicKey(tenant, version, productName, topicName);
+		topicService.remove(key, "test");
+
 
 		Boolean ok = topicService.isDeleteMarked(key);
 		Assert.assertTrue(ok);
@@ -132,7 +134,7 @@ public class TopicServiceTest extends TestHelper {
 	@Test
 	public void removeNonExisting() {
 		TopicKey key = new TopicKey(tenant, version, productName, topicName);
-		topicService.remove(tenant, version, productName, topicName, "test");
+		topicService.remove(key, "test");
 		Boolean ok = topicService.isDeleteMarked(key);
 		Assert.assertTrue(ok);
 	}
@@ -140,10 +142,12 @@ public class TopicServiceTest extends TestHelper {
 	@Test(expected = RecordChangedByAnotherUser.class)
 	public void updatedByAnotherUser() {
 
-		TopicRec fetched1 = topicService.get(tenant, version, productName, topicName);
+		TopicKey key = new TopicKey(tenant, version, productName, topicName);
+		TopicRec fetched1 = topicService.get(key);
+
 		fetched1.description = "CHANGED1";
 
-		TopicRec fetched2 = topicService.get(tenant, version, productName, topicName);
+		TopicRec fetched2 = topicService.get(key);
 		fetched2.description = "CHANGED BY THE FAST ONE";
 		topicService.store(fetched2, "test");
 
