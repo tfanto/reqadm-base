@@ -37,7 +37,7 @@ public class ProductServiceTest extends TestHelper {
 		Db.clear();
 		// setupOperationTestData1();
 		// setupOperationTestData2();
-		 setupDataForProductTests();
+		setupDataForProductTests();
 	}
 
 	@After
@@ -74,13 +74,15 @@ public class ProductServiceTest extends TestHelper {
 
 	@Test
 	public void listByNameAndVersion() {
-		List<ProductRec> list = productService.list(tenant, "ois", 1);
+		ProductKey key = new ProductKey(tenant, 1, "ois");
+		List<ProductRec> list = productService.list(key);
 		Assert.assertNotNull(list);
 	}
 
 	@Test
 	public void listByNameAndVersionFAIL() {
-		List<ProductRec> list = productService.list(tenant, "ois", 134);
+		ProductKey key = new ProductKey(tenant, 134, "ois");
+		List<ProductRec> list = productService.list(key);
 		Assert.assertNotNull(list);
 	}
 
@@ -98,27 +100,32 @@ public class ProductServiceTest extends TestHelper {
 
 	@Test
 	public void get() {
-		ProductRec rec = productService.get(tenant, version, productName);
+		ProductKey key = new ProductKey(tenant, version, "ois");
+		ProductRec rec = productService.get(key);
 		Assert.assertNotNull(rec);
 	}
 
 	@Test
 	public void getFail() {
-		ProductRec rec = productService.get(tenant, 345, productName);
+		ProductKey key = new ProductKey(tenant, 345, "ois");
+		ProductRec rec = productService.get(key);
 		Assert.assertEquals(null, rec);
 	}
 
 	@Test
 	public void exist() {
+		ProductKey key = new ProductKey(tenant, 1, productName);
 
-		Boolean exists = productService.exists(tenant, 1, productName);
+		Boolean exists = productService.exists(key);
 		Assert.assertTrue(exists);
 	}
 
 	@Test
 	public void existFail() {
-		productService.remove(tenant, 42, productName, "test");
-		Boolean exists = productService.exists(tenant, 42, productName);
+		ProductKey key = new ProductKey(tenant, 42, productName);
+
+		productService.remove(key, "test");
+		Boolean exists = productService.exists(key);
 		Assert.assertFalse(exists);
 	}
 
@@ -129,18 +136,19 @@ public class ProductServiceTest extends TestHelper {
 		ProductRec rec = new ProductRec(key, "aNewRecord", null, null);
 		rec.shortdescr = "hepp";
 		productService.store(rec, "test");
-		ProductRec fetched = productService.get(tenant, version, productName + "NEW");
+		ProductRec fetched = productService.get(key);
 		Assert.assertNotNull(fetched);
 	}
 
 	@Test
 	public void storeExisting() {
+		ProductKey key = new ProductKey(tenant, version, productName);
 
-		ProductRec fetched = productService.get(tenant, version, productName);
+		ProductRec fetched = productService.get(key);
 		Assert.assertEquals("ois longdescription", fetched.description);
 		fetched.description = "CHANGED";
 		productService.store(fetched, "test");
-		fetched = productService.get(tenant, version, productName);
+		fetched = productService.get(key);
 		Assert.assertNotNull(fetched);
 		Assert.assertEquals("CHANGED", fetched.description);
 
@@ -153,18 +161,20 @@ public class ProductServiceTest extends TestHelper {
 		rec.chgnbr = 0;
 		productService.store(rec, "test");
 
-		ProductRec fetched = productService.get(tenant, version, productName);
+		ProductRec fetched = productService.get(key);
 		Assert.assertEquals("aNewRecord2", fetched.description);
-		productService.remove(tenant, version, productName, "test");
+		productService.remove(key, "test");
 
-		ProductRec deleteMarked = productService.get(tenant, version, productName);
+		ProductRec deleteMarked = productService.get(key);
 		Assert.assertTrue(deleteMarked.dltusr != null);
 	}
 
 	@Test
 	public void removeNonExisting() {
-		productService.remove(tenant, 171, productName, "test");
-		Boolean exists = productService.exists(tenant, 171, productName);
+		ProductKey key = new ProductKey(tenant, 171, productName);
+
+		productService.remove(key, "test");
+		Boolean exists = productService.exists(key);
 		Assert.assertFalse(exists);
 	}
 
@@ -178,9 +188,10 @@ public class ProductServiceTest extends TestHelper {
 
 	@Test(expected = RecordChangedByAnotherUser.class)
 	public void updatedByAnotherUser() {
+		ProductKey key = new ProductKey(tenant, version, productName);
 
-		ProductRec fetched1 = productService.get(tenant, version, productName);
-		ProductRec fetched2 = productService.get(tenant, version, productName);
+		ProductRec fetched1 = productService.get(key);
+		ProductRec fetched2 = productService.get(key);
 		productService.store(fetched2, "test");
 		productService.store(fetched1, "test");
 
@@ -191,8 +202,8 @@ public class ProductServiceTest extends TestHelper {
 
 		ProductKey key = new ProductKey(tenant, version, productName);
 
-		ProductRec rec = productService.get(tenant, key.version, key.productName);
-		Boolean exists = productService.exists(tenant, version, productName);
+		ProductRec rec = productService.get(key);
+		Boolean exists = productService.exists(key);
 		Assert.assertTrue(exists);
 
 		int newVersion = version + 5;
