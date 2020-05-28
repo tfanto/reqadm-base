@@ -115,8 +115,8 @@ public class OperationServiceTest extends TestHelper {
 
 	@Test
 	public void storeExisting() {
-		operationService.remove(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq, "test");
 		OperationKey key = new OperationKey(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq);
+		operationService.remove(key, "test");
 		OperationRec rec = new OperationRec(key, "aNewRecord2", null, null);
 		rec.shortdescr = "kort rackare";
 		operationService.store(rec, "test");
@@ -139,7 +139,7 @@ public class OperationServiceTest extends TestHelper {
 		key.operationName = "newRecord42";
 		OperationRec fetched = operationService.get(key);
 		Assert.assertEquals("aNewRecord2", fetched.description);
-		operationService.remove(tenant, version, productName, topicName, processName, seq, "newRecord42", operationSeq, "test");
+		operationService.remove(key, "test");
 
 		OperationKey key2 = new OperationKey(tenant, version, productName, topicName, processName, seq, "newRecord42", operationSeq);
 
@@ -149,8 +149,9 @@ public class OperationServiceTest extends TestHelper {
 
 	@Test
 	public void removeNonExisting() {
-		operationService.remove(tenant, version, productName, topicName, processName, seq, "newRecord424", operationSeq, "test");
 		OperationKey key = new OperationKey(tenant, version, productName, topicName, processName, seq, "newRecord424", operationSeq);
+
+		operationService.remove(key, "test");
 		OperationRec lookup = new OperationRec(key, null, null, null);
 		Boolean exists = operationService.exists(lookup.key);
 		Assert.assertFalse(exists);
@@ -159,8 +160,8 @@ public class OperationServiceTest extends TestHelper {
 	@Test(expected = RecordChangedByAnotherUser.class)
 	public void updatedByAnotherUser() {
 
-		operationService.remove(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq, "test");
 		OperationKey key = new OperationKey(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq);
+		operationService.remove(key, "test");
 		OperationRec rec = new OperationRec(key, "aNewRecord2", null, null);
 		operationService.store(rec, "test");
 		OperationRec fetched1 = operationService.get(key);

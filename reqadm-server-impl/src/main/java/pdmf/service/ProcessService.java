@@ -89,8 +89,8 @@ public class ProcessService {
 		return ret;
 	}
 
-	public boolean exists(ProcessRec process) {
-		ServiceHelper.validate(process);
+	public boolean exists(ProcessKey key) {
+		ServiceHelper.validate(key);
 
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -100,12 +100,12 @@ public class ProcessService {
 			connection = Db.open();
 			if (connection != null) {
 				stmt = connection.prepareStatement(theSQL);
-				stmt.setString(1, process.key.tenantid);
-				stmt.setInt(2, process.key.version);
-				stmt.setString(3, process.key.productName);
-				stmt.setString(4, process.key.topicName);
-				stmt.setString(5, process.key.processName);
-				stmt.setInt(6, process.key.processSeq);
+				stmt.setString(1, key.tenantid);
+				stmt.setInt(2, key.version);
+				stmt.setString(3, key.productName);
+				stmt.setString(4, key.topicName);
+				stmt.setString(5, key.processName);
+				stmt.setInt(6, key.processSeq);
 				rs = stmt.executeQuery();
 				rs.next();
 				Integer n = rs.getInt(1);
@@ -153,13 +153,9 @@ public class ProcessService {
 		return false;
 	}
 
-	public ProcessRec get(String tenantid, Integer version, String productName, String topicName, String processName, Integer sequence) {
-		ServiceHelper.validate("Tenant", tenantid);
-		ServiceHelper.validate("Version", version);
-		ServiceHelper.validate("Product", productName);
-		ServiceHelper.validate("Topic", topicName);
-		ServiceHelper.validate("Process", processName);
-		ServiceHelper.validate("Sequence", sequence);
+	public ProcessRec get(ProcessKey key) {
+		ServiceHelper.validate(key);
+		
 		String theSQL = ServiceHelper.getSQL("processSelectSingleRecSQL");
 
 		Connection connection = null;
@@ -170,12 +166,12 @@ public class ProcessService {
 			connection = Db.open();
 			if (connection != null) {
 				stmt = connection.prepareStatement(theSQL);
-				stmt.setString(1, tenantid);
-				stmt.setInt(2, version);
-				stmt.setString(3, productName);
-				stmt.setString(4, topicName);
-				stmt.setString(5, processName);
-				stmt.setInt(6, sequence);
+				stmt.setString(1, key.tenantid);
+				stmt.setInt(2, key.version);
+				stmt.setString(3, key.productName);
+				stmt.setString(4, key.topicName);
+				stmt.setString(5, key.processName);
+				stmt.setInt(6, key.processSeq);
 				rs = stmt.executeQuery();
 				if (rs.next()) {
 					Instant rs_crtdat = Db.TimeStamp2Instant(rs.getTimestamp("crtdat"));
@@ -196,8 +192,8 @@ public class ProcessService {
 					String rs_processname = rs.getString("processname");
 					Integer rs_processseq = rs.getInt("processseq");
 
-					ProcessKey key = new ProcessKey(rs_tenantid, rs_version, rs_productname, rs_topicname, rs_processname, rs_processseq);
-					rec = new ProcessRec(key, rs_description, rs_crtdat, rs_chgnbr);
+					ProcessKey rs_key = new ProcessKey(rs_tenantid, rs_version, rs_productname, rs_topicname, rs_processname, rs_processseq);
+					rec = new ProcessRec(rs_key, rs_description, rs_crtdat, rs_chgnbr);
 					rec.shortdescr = rs_shortdescr;
 					rec.crtusr = rs_crtusr;
 					rec.chgdat = rs_chgdat;
@@ -239,7 +235,7 @@ public class ProcessService {
 		rec.shortdescr = ServiceHelper.ensureStringLength(rec.shortdescr, 100);
 		rec.description = ServiceHelper.ensureStringLength(rec.description, 995);
 
-		if (!exists(rec)) {
+		if (!exists(rec.key)) {
 			insert(rec, loggedInUserId);
 		} else {
 			update(rec, loggedInUserId);
@@ -287,7 +283,7 @@ public class ProcessService {
 		try {
 			connection = Db.open();
 			if (connection != null) {
-				ProcessRec dbRec = get(rec.key.tenantid, rec.key.version, rec.key.productName, rec.key.topicName, rec.key.processName, rec.key.processSeq);
+				ProcessRec dbRec = get(rec.key);
 				if (dbRec == null) {
 					return 0;
 				}
@@ -322,19 +318,18 @@ public class ProcessService {
 		return null;
 	}
 
-	public void remove(String tenantid, Integer version, String productName, String topicName, String processName, Integer sequence, String userid) {
-		ServiceHelper.validate("tenant", tenantid);
+	public void remove(ProcessKey key, String userid) {
+		ServiceHelper.validate("tenant", key.tenantid);
 		ServiceHelper.validate("Userid", userid);
-		ServiceHelper.validate("Version", version);
-		ServiceHelper.validate("Product", productName);
-		ServiceHelper.validate("Topic", topicName);
-		ServiceHelper.validate("Process", processName);
-		ServiceHelper.validate("Sequence", sequence);
+		ServiceHelper.validate("Version", key.version);
+		ServiceHelper.validate("Product", key.productName);
+		ServiceHelper.validate("Topic", key.topicName);
+		ServiceHelper.validate("Process", key.processName);
+		ServiceHelper.validate("Sequence", key.processSeq);
 		Connection connection = null;
 		PreparedStatement stmt = null;
 
 		// already done we dont want to change the delete date
-		ProcessKey key = new ProcessKey(tenantid, version, productName, topicName, processName, sequence);
 		if (isDeleteMarked(key)) {
 			LOGGER.info(Cst.ALREADY_DELETE_NO_ACTION);
 			return;
@@ -346,20 +341,20 @@ public class ProcessService {
 			connection = Db.open();
 			if (connection != null) {
 				connection.setAutoCommit(false);
-				if (ProductService.isLocked(tenantid, version, productName)) {
-					LOGGER.info("LOCKED " + tenantid + " " + version + " " + productName);
+				if (ProductService.isLocked(key.tenantid, key.version, key.productName)) {
+					LOGGER.info("LOCKED " + key.tenantid + " " + key.version + " " + key.productName);
 					return;
 				}
 				stmt = connection.prepareStatement(theSQL);
 				stmt.setString(1, userid);
-				stmt.setString(2, productName);
-				stmt.setString(3, topicName);
-				stmt.setString(4, processName);
-				stmt.setInt(5, sequence);
-				stmt.setInt(6, version);
-				stmt.setString(7, tenantid);
+				stmt.setString(2, key.productName);
+				stmt.setString(3, key.topicName);
+				stmt.setString(4, key.processName);
+				stmt.setInt(5, key.processSeq);
+				stmt.setInt(6, key.version);
+				stmt.setString(7, key.tenantid);
 				stmt.executeUpdate();
-				deleteAllDependencies(connection, tenantid, version, productName, topicName, processName, sequence, userid);
+				deleteAllDependencies(connection, key.tenantid, key.version, key.productName, key.topicName, key.processName, key.processSeq, userid);
 				connection.commit();
 			}
 		} catch (SQLException e) {

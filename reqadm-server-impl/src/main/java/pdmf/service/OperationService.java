@@ -341,21 +341,13 @@ public class OperationService {
 		return null;
 	}
 
-	public void remove(String tenantid, Integer version, String productName, String topicName, String processName, Integer sequence, String operationName, Integer operationSequence, String userid) {
-		ServiceHelper.validate("Tenant", tenantid);
+	public void remove(OperationKey key, String userid) {
 		ServiceHelper.validate("Userid", userid);
-		ServiceHelper.validate("Version", version);
-		ServiceHelper.validate("Product", productName);
-		ServiceHelper.validate("Topic", topicName);
-		ServiceHelper.validate("Process", processName);
-		ServiceHelper.validate("Sequence", sequence);
-		ServiceHelper.validate("OperationName", operationName);
-		ServiceHelper.validate("OperationSequence", operationSequence);
+		ServiceHelper.validate(key);
 		Connection connection = null;
 		PreparedStatement stmt = null;
 
 		// already done we dont want to change the delete date
-		OperationKey key = new OperationKey(tenantid, version, productName, topicName, processName, sequence, operationName, operationSequence);
 		if (isDeleteMarked(key)) {
 			LOGGER.info(Cst.ALREADY_DELETE_NO_ACTION);
 			return;
@@ -366,21 +358,21 @@ public class OperationService {
 			connection = Db.open();
 			if (connection != null) {
 
-				if (ProductService.isLocked(tenantid, version, productName)) {
-					LOGGER.info("LOCKED " + tenantid + " " + version + " " + productName);
+				if (ProductService.isLocked(key.tenantid, key.version, key.productName)) {
+					LOGGER.info("LOCKED " + key.tenantid + " " + key.version + " " + key.productName);
 					return;
 				}
 
 				stmt = connection.prepareStatement(theSQL);
 				stmt.setString(1, userid);
-				stmt.setString(2, productName);
-				stmt.setString(3, topicName);
-				stmt.setString(4, processName);
-				stmt.setInt(5, sequence);
-				stmt.setString(6, operationName);
-				stmt.setInt(7, operationSequence);
-				stmt.setInt(8, version);
-				stmt.setString(9, tenantid);
+				stmt.setString(2, key.productName);
+				stmt.setString(3, key.topicName);
+				stmt.setString(4, key.processName);
+				stmt.setInt(5, key.sequence);
+				stmt.setString(6, key.operationName);
+				stmt.setInt(7, key.operationSequence);
+				stmt.setInt(8, key.version);
+				stmt.setString(9, key.tenantid);
 				stmt.executeUpdate();
 			}
 		} catch (SQLException e) {
