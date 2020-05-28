@@ -62,25 +62,27 @@ public class OperationServiceTest extends TestHelper {
 
 	@Test
 	public void getList2() {
-		List<OperationRec> operations = operationService.list(tenant, version, productName, topicName, processName,seq);
+		List<OperationRec> operations = operationService.list(tenant, version, productName, topicName, processName, seq);
 		Assert.assertEquals(3, operations.size());
 	}
 
 	@Test
 	public void getList2_FAIL() {
-		List<OperationRec> operations = operationService.list(tenant, version, productName + "NOWAY", topicName, processName,seq);
+		List<OperationRec> operations = operationService.list(tenant, version, productName + "NOWAY", topicName, processName, seq);
 		Assert.assertEquals(0, operations.size());
 	}
 
 	@Test
 	public void get() {
-		OperationRec operation = operationService.get(tenant, version, productName, topicName, processName, seq, "YADAYDYA", operationSeq);
+		OperationKey key = new OperationKey(tenant, version, productName, topicName, processName, seq, "YADAYDYA", operationSeq);
+		OperationRec operation = operationService.get(key);
 		Assert.assertEquals(null, operation);
 	}
 
 	@Test
 	public void getFail() {
-		OperationRec operation = operationService.get(tenant, version, productName, topicName, processName, seq, operationNameADD, operationSeq);
+		OperationKey key = new OperationKey(tenant, version, productName, topicName, processName, seq, operationNameADD, operationSeq);
+		OperationRec operation = operationService.get(key);
 		Assert.assertEquals("customer", operation.key.topicName);
 	}
 
@@ -106,7 +108,7 @@ public class OperationServiceTest extends TestHelper {
 		OperationRec rec = new OperationRec(key, "aNewRecord", null, null);
 		rec.shortdescr = "ya";
 		operationService.store(rec, "test");
-		OperationRec fetched = operationService.get(tenant, version, productName, topicName, processName, seq, "yadayada", operationSeq);
+		OperationRec fetched = operationService.get(key);
 		Assert.assertNotNull(fetched);
 
 	}
@@ -118,11 +120,11 @@ public class OperationServiceTest extends TestHelper {
 		OperationRec rec = new OperationRec(key, "aNewRecord2", null, null);
 		rec.shortdescr = "kort rackare";
 		operationService.store(rec, "test");
-		OperationRec fetched = operationService.get(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq);
+		OperationRec fetched = operationService.get(key);
 		Assert.assertEquals("aNewRecord2", fetched.description);
 		fetched.description = "CHANGED";
 		operationService.store(fetched, "test");
-		fetched = operationService.get(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq);
+		fetched = operationService.get(key);
 
 		Assert.assertNotNull(fetched);
 		Assert.assertEquals("CHANGED", fetched.description);
@@ -134,7 +136,8 @@ public class OperationServiceTest extends TestHelper {
 		OperationKey key = new OperationKey(tenant, version, productName, topicName, processName, seq, "newRecord42", operationSeq);
 		OperationRec rec = new OperationRec(key, "aNewRecord2", null, null);
 		operationService.store(rec, "test");
-		OperationRec fetched = operationService.get(tenant, version, productName, topicName, processName, seq, "newRecord42", operationSeq);
+		key.operationName = "newRecord42";
+		OperationRec fetched = operationService.get(key);
 		Assert.assertEquals("aNewRecord2", fetched.description);
 		operationService.remove(tenant, version, productName, topicName, processName, seq, "newRecord42", operationSeq, "test");
 
@@ -160,11 +163,11 @@ public class OperationServiceTest extends TestHelper {
 		OperationKey key = new OperationKey(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq);
 		OperationRec rec = new OperationRec(key, "aNewRecord2", null, null);
 		operationService.store(rec, "test");
-		OperationRec fetched1 = operationService.get(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq);
+		OperationRec fetched1 = operationService.get(key);
 		Assert.assertEquals("aNewRecord2", fetched1.description);
 		fetched1.description = "CHANGED1";
 
-		OperationRec fetched2 = operationService.get(tenant, version, productName, topicName, processName, seq, "newRecord2", operationSeq);
+		OperationRec fetched2 = operationService.get(key);
 		Assert.assertEquals("aNewRecord2", fetched2.description);
 		fetched2.description = "CHANGED BY THE FAST ONE";
 		operationService.store(fetched2, "test");

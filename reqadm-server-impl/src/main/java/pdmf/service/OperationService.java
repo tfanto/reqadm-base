@@ -165,15 +165,8 @@ public class OperationService {
 		return false;
 	}
 
-	public OperationRec get(String tenantid, Integer version, String productName, String topicName, String processName, Integer sequence, String operationName, Integer operationSeq) {
-		ServiceHelper.validate("Tenant", tenantid);
-		ServiceHelper.validate("Version", version);
-		ServiceHelper.validate("Product", productName);
-		ServiceHelper.validate("Topic", topicName);
-		ServiceHelper.validate("Process", processName);
-		ServiceHelper.validate("Sequence", sequence);
-		ServiceHelper.validate("OperationName", operationName);
-		ServiceHelper.validate("OperationSeq", operationSeq);
+	public OperationRec get(OperationKey key) {
+		ServiceHelper.validate(key);
 
 		String theSQL = ServiceHelper.getSQL("operationSelectSingleRecSQL");
 		Connection connection = null;
@@ -184,14 +177,14 @@ public class OperationService {
 			connection = Db.open();
 			if (connection != null) {
 				stmt = connection.prepareStatement(theSQL);
-				stmt.setString(1, tenantid);
-				stmt.setInt(2, version);
-				stmt.setString(3, productName);
-				stmt.setString(4, topicName);
-				stmt.setString(5, processName);
-				stmt.setInt(6, sequence);
-				stmt.setString(7, operationName);
-				stmt.setInt(8, operationSeq);
+				stmt.setString(1, key.tenantid);
+				stmt.setInt(2, key.version);
+				stmt.setString(3, key.productName);
+				stmt.setString(4, key.topicName);
+				stmt.setString(5, key.processName);
+				stmt.setInt(6, key.sequence);
+				stmt.setString(7, key.operationName);
+				stmt.setInt(8, key.operationSequence);
 				rs = stmt.executeQuery();
 				if (rs.next()) {
 					Instant rs_crtdat = Db.TimeStamp2Instant(rs.getTimestamp("crtdat"));
@@ -214,8 +207,8 @@ public class OperationService {
 					String rs_operationname = rs.getString("operationname");
 					Integer rs_operationseq = rs.getInt("operationseq");
 
-					OperationKey key = new OperationKey(rs_tenantid, rs_version, rs_productname, rs_topicname, rs_processname, rs_processseq, rs_operationname, rs_operationseq);
-					rec = new OperationRec(key, rs_description, rs_crtdat, rs_chgnbr);
+					OperationKey rs_key = new OperationKey(rs_tenantid, rs_version, rs_productname, rs_topicname, rs_processname, rs_processseq, rs_operationname, rs_operationseq);
+					rec = new OperationRec(rs_key, rs_description, rs_crtdat, rs_chgnbr);
 					rec.shortdescr = rs_shortdescr;
 					rec.crtusr = rs_crtusr;
 					rec.chgdat = rs_chgdat;
@@ -233,6 +226,7 @@ public class OperationService {
 			Db.close(connection);
 		}
 		return rec;
+
 	}
 
 	public String store(OperationRec rec, String loggedInUserId) {
@@ -310,8 +304,7 @@ public class OperationService {
 		try {
 			connection = Db.open();
 			if (connection != null) {
-				OperationRec dbRec = get(rec.key.tenantid, rec.key.version, rec.key.productName, rec.key.topicName, rec.key.processName, rec.key.sequence, rec.key.operationName,
-						rec.key.operationSequence);
+				OperationRec dbRec = get(rec.key);
 				if (dbRec == null) {
 					return 0;
 				}
