@@ -51,21 +51,18 @@ public class ExportSupport {
 			Element product = buildProduct(doc, productRec);
 			doc.appendChild(product);
 
-			List<TopicRec> topics = topicService.list(productRec.key.tenantid, productRec.key.version,
-					productRec.key.productName);
+			List<TopicRec> topics = topicService.list(productRec.key.tenantid, productRec.key.version, productRec.key.productName);
 			for (TopicRec topicRec : topics) {
 				Element topic = buildTopic(doc, topicRec);
 				product.appendChild(topic);
 
-				List<ProcessRec> processes = processService.list(topicRec.key.tenantid, topicRec.key.version,
-						topicRec.key.productName, topicRec.key.topicName);
+				List<ProcessRec> processes = processService.list(topicRec.key.tenantid, topicRec.key.version, topicRec.key.productName, topicRec.key.topicName);
 				for (ProcessRec processRec : processes) {
 					Element process = buildProcess(doc, processRec);
 					topic.appendChild(process);
 
-					List<OperationRec> operations = operationService.list(processRec.key.tenantid,
-							processRec.key.version, processRec.key.productName, processRec.key.topicName,
-							processRec.key.processName);
+					List<OperationRec> operations = operationService.list(processRec.key.tenantid, processRec.key.version, processRec.key.productName, processRec.key.topicName,
+							processRec.key.processName, processRec.key.processSeq);
 					for (OperationRec operationRec : operations) {
 						Element operation = buildOperation(doc, operationRec);
 						process.appendChild(operation);

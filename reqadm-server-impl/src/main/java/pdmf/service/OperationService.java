@@ -26,76 +26,6 @@ public class OperationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OperationService.class);
 	ProcessService processService = new ProcessService();
 
-
-	public List<OperationRec> list(String tenantid, Integer version, String productName, String topicName, String processName) {
-
-		ServiceHelper.validate("Tenant", tenantid);
-		ServiceHelper.validate("Version", version);
-		ServiceHelper.validate("Product", productName);
-		ServiceHelper.validate("Topic", topicName);
-		ServiceHelper.validate("Process", processName);
-
-		String theSQL = ServiceHelper.getSQL("operationSelectSQL2");
-
-		List<OperationRec> ret = new ArrayList<>();
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			connection = Db.open();
-			if (connection != null) {
-				stmt = connection.prepareStatement(theSQL);
-				stmt.setString(1, tenantid);
-				stmt.setInt(2, version);
-				stmt.setString(3, productName);
-				stmt.setString(4, topicName);
-				stmt.setString(5, processName);
-				rs = stmt.executeQuery();
-				while (rs.next()) {
-
-					Instant rs_crtdat = Db.TimeStamp2Instant(rs.getTimestamp("crtdat"));
-					String rs_crtusr = rs.getString("crtusr");
-					Instant rs_chgdat = Db.TimeStamp2Instant(rs.getTimestamp("chgdat"));
-					String rs_chgusr = rs.getString("chgusr");
-					Instant rs_dltdat = Db.TimeStamp2Instant(rs.getTimestamp("dltdat"));
-					String rs_dltusr = rs.getString("dltusr");
-					Integer rs_chgnbr = rs.getInt("chgnbr");
-					Integer rs_crtver = rs.getInt("crtver");
-					String rs_description = rs.getString("description");
-					String rs_shortdescr = rs.getString("shortdescr");
-
-					String rs_tenantid = rs.getString("tenantid");
-					Integer rs_version = rs.getInt("version");
-					String rs_productname = rs.getString("productname");
-					String rs_topicname = rs.getString("topicname");
-					String rs_processname = rs.getString("processname");
-					Integer rs_processseq = rs.getInt("processseq");
-					String rs_operationname = rs.getString("operationname");
-					Integer rs_operationseq = rs.getInt("operationseq");
-
-					OperationKey key = new OperationKey(rs_tenantid, rs_version, rs_productname, rs_topicname, rs_processname, rs_processseq, rs_operationname, rs_operationseq);
-					OperationRec rec = new OperationRec(key, rs_description, rs_crtdat, rs_chgnbr);
-					rec.shortdescr = rs_shortdescr;
-					rec.crtusr = rs_crtusr;
-					rec.chgdat = rs_chgdat;
-					rec.chgusr = rs_chgusr;
-					rec.crtver = rs_crtver;
-					rec.dltdat = rs_dltdat;
-					rec.dltusr = rs_dltusr;
-					ret.add(rec);
-				}
-				return ret;
-			}
-		} catch (SQLException e) {
-			LOGGER.error(e.toString(), e);
-		} finally {
-			Db.close(rs);
-			Db.close(stmt);
-			Db.close(connection);
-		}
-		return ret;
-	}
-
 	public List<OperationRec> list(String tenantid, Integer version, String productName, String topicName, String processName, Integer processeq) {
 
 		ServiceHelper.validate("Tenant", tenantid);
@@ -166,8 +96,8 @@ public class OperationService {
 		return ret;
 	}
 
-	public boolean exists(OperationRec rec) {
-		ServiceHelper.validate(rec);
+	public boolean exists(OperationKey key) {
+		ServiceHelper.validate(key);
 
 		String theSQL = ServiceHelper.getSQL("operationExistsSQL");
 
@@ -178,14 +108,14 @@ public class OperationService {
 			connection = Db.open();
 			if (connection != null) {
 				stmt = connection.prepareStatement(theSQL);
-				stmt.setString(1, rec.key.tenantid);
-				stmt.setInt(2, rec.key.version);
-				stmt.setString(3, rec.key.productName);
-				stmt.setString(4, rec.key.topicName);
-				stmt.setString(5, rec.key.processName);
-				stmt.setInt(6, rec.key.sequence);
-				stmt.setString(7, rec.key.operationName);
-				stmt.setInt(8, rec.key.operationSequence);
+				stmt.setString(1, key.tenantid);
+				stmt.setInt(2, key.version);
+				stmt.setString(3, key.productName);
+				stmt.setString(4, key.topicName);
+				stmt.setString(5, key.processName);
+				stmt.setInt(6, key.sequence);
+				stmt.setString(7, key.operationName);
+				stmt.setInt(8, key.operationSequence);
 				rs = stmt.executeQuery();
 				rs.next();
 				Integer n = rs.getInt(1);
@@ -319,7 +249,7 @@ public class OperationService {
 			LOGGER.info(Cst.ALREADY_DELETE_NO_ACTION);
 			return null;
 		}
-		
+
 		if (isParentDeleteMarked(rec.key)) {
 			LOGGER.info(Cst.PARENT_IS_DELETE_NO_ACTION);
 			return null;
@@ -328,7 +258,7 @@ public class OperationService {
 		rec.shortdescr = ServiceHelper.ensureStringLength(rec.shortdescr, 100);
 		rec.description = ServiceHelper.ensureStringLength(rec.description, 995);
 
-		if (!exists(rec)) {
+		if (!exists(rec.key)) {
 			insert(rec, loggedInUserId);
 		} else {
 			update(rec, loggedInUserId);
