@@ -1,7 +1,5 @@
 
 CREATE DATABASE reqadm; 
-CREATE EXTENSION postgis; 
-	 CREATE EXTENSION postgis_topology;
 	 
 --  DATABASEN USER LOGO ETC 	 
 	  
@@ -9,6 +7,90 @@ CREATE USER reqadm WITH PASSWORD 'reqadm';
 CREATE SCHEMA AUTHORIZATION reqadm; 
 ALTER USER reqadm SET search_path = reqadm, public;
 GRANT CONNECT ON DATABASE reqadm TO reqadm;
+
+
+
+-- Table: reqadm.constant
+
+-- DROP TABLE reqadm.constant;
+
+CREATE TABLE reqadm.constant
+(
+    cst character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    lncd character varying(15) COLLATE pg_catalog."default" NOT NULL,
+    value character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT constant_pkey PRIMARY KEY (cst, lncd)
+)
+
+insert into reqadm.constant (lncd,cst,value) values('se','THIS_VERSION_IS_LOCKED','Denna version är låst och kan endast visas');
+insert into reqadm.constant (lncd,cst,value) values('se','PGM_NAME','Fanto Kravadministration (c) 2020 All Rights Reserved');
+insert into reqadm.constant (lncd,cst,value) values('se','RECORD_CHANGED_BY_ANOTHER_USER','Posten ändrad av annan användare. Uppdatera, ändra och spara igen');
+insert into reqadm.constant (lncd,cst,value) values('se','RECORD_HAS_DEPENDENCIES',' har beroenden och kan inte tas bort.');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_PRODUCT_SELECTED','Ingen produkt angiven. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_VERSION_SELECTED','Ingen version angiven. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','VERSION_NOT_NUMERIC','Version skall vara ett positivt heltal. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_TOPIC_SELECTED','Ingen ämnesområde angivet. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_PROCESS_NAME','Ingen process angiven. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_PROCESS_SEQ','Inget processteg angivet. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_PROCESS_SEQ_AS_INTEGER','Processteg måste vara ett positivt heltal. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_OPERATION_NAME','Ingen operation angiven. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_OPERATION_SEQ','Inget operationssteg angivet. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_OPERATION_SEQ_AS_INTEGER','Operationssteg måste vara ett positivt heltal. Kan ej utföra kommandot');
+insert into reqadm.constant (lncd,cst,value) values('se','VERSION_MUST_BE_SELECTED','Version måstet väljas i produktversionslistan');
+insert into reqadm.constant (lncd,cst,value) values('se','VERSION','Version');
+insert into reqadm.constant (lncd,cst,value) values('se','STORE','Spara');
+insert into reqadm.constant (lncd,cst,value) values('se','REMOVE','Ta bort');
+insert into reqadm.constant (lncd,cst,value) values('se','CLEAR','Rensa');
+insert into reqadm.constant (lncd,cst,value) values('se','WRK_WITH_PRODUCTS','Arbeta med produkt');
+insert into reqadm.constant (lncd,cst,value) values('se','TENANT_SELECT','Välj klient');
+insert into reqadm.constant (lncd,cst,value) values('se','WRK_WITH_TENANT','Arbeta med klient');
+insert into reqadm.constant (lncd,cst,value) values('se','WRK_WITH_NEWPRODUCT','Arbeta med produkt/version');
+insert into reqadm.constant (lncd,cst,value) values('se','PRODUCT_VIEWER','Produktvisning');
+insert into reqadm.constant (lncd,cst,value) values('se','SEARCH','Leta');
+insert into reqadm.constant (lncd,cst,value) values('se','SEARCH_RESULT','Sökresultat');
+insert into reqadm.constant (lncd,cst,value) values('se','SEARCH_1_3','Sökbegrepp');
+insert into reqadm.constant (lncd,cst,value) values('se','PRODUCT','Produkt');
+insert into reqadm.constant (lncd,cst,value) values('se','TOPIC','Ämnesområde');
+insert into reqadm.constant (lncd,cst,value) values('se','TOPIC_SHORT','ÄmnOmr');
+insert into reqadm.constant (lncd,cst,value) values('se','PROCESS','Process');
+insert into reqadm.constant (lncd,cst,value) values('se','PROCESS_SEQ','Seq');
+insert into reqadm.constant (lncd,cst,value) values('se','OPERATION','Operation');
+insert into reqadm.constant (lncd,cst,value) values('se','OPERATION_SEQ','Seq');
+insert into reqadm.constant (lncd,cst,value) values('se','DESCRIPTION','Beskrivning');
+insert into reqadm.constant (lncd,cst,value) values('se','DESCRIPTION_SHORT','Kort beskrivning');
+insert into reqadm.constant (lncd,cst,value) values('se','TARGET_VERSION_MUST_HAVE_A_VALUE','Målversion måste ha ett värde');
+insert into reqadm.constant (lncd,cst,value) values('se','TARGET_VERSION_MUST_BE_AN_INTEGER','Målversion måste vara en siffra , inga decimaler');
+insert into reqadm.constant (lncd,cst,value) values('se','TARGET_VERSION_MUST_BE_BIGGER','Målversion måste vara högre än frånversionen');
+insert into reqadm.constant (lncd,cst,value) values('se','PRODUCTNAME_MUST_HAVE_A_VALUE','Produktnamn måste ha ett värde');
+insert into reqadm.constant (lncd,cst,value) values('se','TENANTID_MUST_HAVE_A_VALUE','Tenantid måste ha ett värde');
+insert into reqadm.constant (lncd,cst,value) values('se','TENANT_DESCRIPTION_HAVE_A_VALUE','Tenantbeskrivning måste ha ett värde');
+insert into reqadm.constant (lncd,cst,value) values('se','SELECT_A_VERSION','Version ej vald ');
+insert into reqadm.constant (lncd,cst,value) values('se','ALREADY_DELETE_NO_ACTION','Post bortagsmarkerad. Kan ej ändras');
+insert into reqadm.constant (lncd,cst,value) values('se','VERSION_LOCKED','Versionen är låst ingen ändring tillåten');
+insert into reqadm.constant (lncd,cst,value) values('se','ALREADY_EXISTS','Post finns redan.');
+insert into reqadm.constant (lncd,cst,value) values('se','PRODUCT_VERSION_STATUS','Produkt/Version/Status');
+insert into reqadm.constant (lncd,cst,value) values('se','NO_SEARCH_CRITERIA','Inga sökord angivna');
+insert into reqadm.constant (lncd,cst,value) values('se','SEARCH_IN_PRODUCT','Sök i product');
+insert into reqadm.constant (lncd,cst,value) values('se','SEARCH_IN_TOPIC','Sök i ämnesområde');
+insert into reqadm.constant (lncd,cst,value) values('se','SEARCH_IN_PROCESS','Sök i process');
+insert into reqadm.constant (lncd,cst,value) values('se','SEARCH_IN_OPERATION','Sök i operation');
+insert into reqadm.constant (lncd,cst,value) values('se','ATGARDER','Åtgärder');
+insert into reqadm.constant (lncd,cst,value) values('se','MAINTAINANCE','Underhåll');
+insert into reqadm.constant (lncd,cst,value) values('se','WELCOME','Välkommen');
+insert into reqadm.constant (lncd,cst,value) values('se','INFO','Info');
+insert into reqadm.constant (lncd,cst,value) values('se','TENANT','Klient');
+insert into reqadm.constant (lncd,cst,value) values('se','CREATED','Skapad: ');
+insert into reqadm.constant (lncd,cst,value) values('se','CHANGED','Ändrad: ');
+insert into reqadm.constant (lncd,cst,value) values('se','REMOVED','Borttagen: ');
+insert into reqadm.constant (lncd,cst,value) values('se','BY',' av ');
+insert into reqadm.constant (lncd,cst,value) values('se','IN_VERSION', ' i version: ');
+insert into reqadm.constant (lncd,cst,value) values('se','PARENT_IS_DELETE_NO_ACTION','Kan ej addera till en borttagsmarkerad post');
+	
+
+TABLESPACE pg_default;
+
+ALTER TABLE reqadm.constant
+    OWNER to reqadm;
 
 
 -- Table: reqadm.tenant
