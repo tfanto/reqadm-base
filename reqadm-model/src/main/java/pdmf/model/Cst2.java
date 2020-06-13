@@ -36,7 +36,7 @@ public class Cst2 {
 	public static final String OPERATION = "OPERATION";
 	public static final String OPERATION_SEQ = "OPERATION_SEQ";
 	public static final String DESCRIPTION = "DESCRIPTION";
-	public static final String DESCRIPTION_SHORT = "DESCRIPTION";	
+	public static final String DESCRIPTION_SHORT = "DESCRIPTION";
 	public static final String TARGET_VERSION_MUST_HAVE_A_VALUE = "TARGET_VERSION_MUST_HAVE_A_VALUE";
 	public static final String TARGET_VERSION_MUST_BE_AN_INTEGER = "TARGET_VERSION_MUST_BE_AN_INTEGER";
 	public static final String TARGET_VERSION_MUST_BE_BIGGER = "TARGET_VERSION_MUST_BE_BIGGER";
@@ -57,11 +57,14 @@ public class Cst2 {
 	public static final String MAINTAINANCE = "MAINTAINANCE";
 	public static final String WELCOME = "WELCOME";
 	public static final String INFO = "INFO";
-	public static final String TENANT = "TENANT";	
+	public static final String TENANT = "TENANT";
 	public static final String CREATED = "CREATED";
 	public static final String CHANGED = "CHANGED";
 	public static final String REMOVED = "REMOVED";
 	public static final String BY = "BY";
 	public static final String IN_VERSION = "IN_VERSION";
-	public static final String PARENT_IS_DELETE_NO_ACTION = "PARENT_IS_DELETE_NO_ACTION";	
+	public static final String PARENT_IS_DELETE_NO_ACTION = "PARENT_IS_DELETE_NO_ACTION";
+	public static final String NEW_VERSION = "NEW_VERSION";
+	public static final String DOES_NOT_EXIST = "DOES_NOT_EXIST";
+	public static final String NEW_PRODUCT = "NEW_PRODUCT";
 }

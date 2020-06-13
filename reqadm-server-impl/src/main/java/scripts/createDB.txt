@@ -85,6 +85,9 @@ insert into reqadm.constant (lncd,cst,value) values('se','REMOVED','Borttagen: '
 insert into reqadm.constant (lncd,cst,value) values('se','BY',' av ');
 insert into reqadm.constant (lncd,cst,value) values('se','IN_VERSION', ' i version: ');
 insert into reqadm.constant (lncd,cst,value) values('se','PARENT_IS_DELETE_NO_ACTION','Kan ej addera till en borttagsmarkerad post');
+insert into reqadm.constant (lncd,cst,value) values('se','DOES_NOT_EXIST','existerar inte');
+insert into reqadm.constant (lncd,cst,value) values('se','NEW_PRODUCT','Ny produkt');
+insert into reqadm.constant (lncd,cst,value) values('se','NEW_VERSION','Ny version');
 	
 
 TABLESPACE pg_default;
