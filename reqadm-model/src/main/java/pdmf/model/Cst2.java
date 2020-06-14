@@ -67,4 +67,14 @@ public class Cst2 {
 	public static final String NEW_VERSION = "NEW_VERSION";
 	public static final String DOES_NOT_EXIST = "DOES_NOT_EXIST";
 	public static final String NEW_PRODUCT = "NEW_PRODUCT";
+	public static final String SELECT_PRODUCT = "SELECT_PRODUCT";
+	public static final String SELECT_VERSION = "SELECT_VERSION";
+	public static final String WORK_WITH_PRODUCT = "WORK_WITH_PRODUCT";
+	public static final String EXPORT_AS_XML = "EXPORT_AS_XML";
+	public static final String NEW_TOPIC_FOR_PRODUCT = "NEW_TOPIC_FOR_PRODUCT";
+	public static final String WORK_WITH_TOPIC = "WORK_WITH_TOPIC";
+	public static final String NEW_PROCESS_FOR_TOPIC = "NEW_PROCESS_FOR_TOPIC";
+	public static final String WORK_WITH_PROCESS = "WORK_WITH_PROCESS";
+	public static final String NEW_OPERATION_FOR_PROCESS = "NEW_OPERATION_FOR_PROCESS";
+	public static final String WORK_WITH_OPERATION = "WORK_WITH_OPERATION";
 }
