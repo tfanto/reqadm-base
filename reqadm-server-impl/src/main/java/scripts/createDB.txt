@@ -99,6 +99,8 @@ insert into reqadm.constant (lncd,cst,value) values('se','NEW_PROCESS_FOR_TOPIC'
 insert into reqadm.constant (lncd,cst,value) values('se','WORK_WITH_PROCESS','Arbeta med process');
 insert into reqadm.constant (lncd,cst,value) values('se','NEW_OPERATION_FOR_PROCESS','Ny operation för process');
 insert into reqadm.constant (lncd,cst,value) values('se','WORK_WITH_OPERATION','Arbeta med operation');
+insert into reqadm.constant (lncd,cst,value) values('se','LINES','Rader');
+
 	
 
 TABLESPACE pg_default;
