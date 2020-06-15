@@ -1,6 +1,6 @@
 package pdmf.model;
 
-public class Cst2 {
+public class CstI18N {
 	public static final String THIS_VERSION_IS_LOCKED = "THIS_VERSION_IS_LOCKED";
 	public static final String PGM_NAME = "PGM_NAME";
 	public static final String RECORD_CHANGED_BY_ANOTHER_USER = "RECORD_CHANGED_BY_ANOTHER_USER";
