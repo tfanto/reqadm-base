@@ -88,7 +88,6 @@ insert into reqadm.constant (lncd,cst,value) values('se','PARENT_IS_DELETE_NO_AC
 insert into reqadm.constant (lncd,cst,value) values('se','DOES_NOT_EXIST','existerar inte');
 insert into reqadm.constant (lncd,cst,value) values('se','NEW_PRODUCT','Ny produkt');
 insert into reqadm.constant (lncd,cst,value) values('se','NEW_VERSION','Ny version');
-
 insert into reqadm.constant (lncd,cst,value) values('se','SELECT_PRODUCT','Välj produkt');
 insert into reqadm.constant (lncd,cst,value) values('se','SELECT_VERSION','Välj version');
 insert into reqadm.constant (lncd,cst,value) values('se','WORK_WITH_PRODUCT','Arbeta med produkt');
@@ -100,6 +99,9 @@ insert into reqadm.constant (lncd,cst,value) values('se','WORK_WITH_PROCESS','Ar
 insert into reqadm.constant (lncd,cst,value) values('se','NEW_OPERATION_FOR_PROCESS','Ny operation för process');
 insert into reqadm.constant (lncd,cst,value) values('se','WORK_WITH_OPERATION','Arbeta med operation');
 insert into reqadm.constant (lncd,cst,value) values('se','LINES','Rader');
+insert into reqadm.constant (lncd,cst,value) values('se','OK','Ok');
+
+
 
 	
 

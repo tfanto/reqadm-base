@@ -78,4 +78,5 @@ public class Cst2 {
 	public static final String NEW_OPERATION_FOR_PROCESS = "NEW_OPERATION_FOR_PROCESS";
 	public static final String WORK_WITH_OPERATION = "WORK_WITH_OPERATION";
 	public static final String LINES = "LINES";
+	public static final String OK = "OK";
 }
