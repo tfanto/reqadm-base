@@ -13,7 +13,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pdmf.model.Cst;
 import pdmf.model.ProcessKey;
 import pdmf.model.ProcessRec;
 import pdmf.model.TopicKey;
@@ -155,7 +154,7 @@ public class ProcessService {
 
 	public ProcessRec get(ProcessKey key) {
 		ServiceHelper.validate(key);
-		
+
 		String theSQL = ServiceHelper.getSQL("processSelectSingleRecSQL");
 
 		Connection connection = null;
@@ -223,12 +222,12 @@ public class ProcessService {
 		}
 
 		if (isDeleteMarked(rec.key)) {
-			LOGGER.info(Cst.ALREADY_DELETE_NO_ACTION);
+			LOGGER.info("Already deleted. No action");
 			return null;
 		}
 
 		if (isParentDeleteMarked(rec.key)) {
-			LOGGER.info(Cst.PARENT_IS_DELETE_NO_ACTION);
+			LOGGER.info("Parent already deleted. No action");
 			return null;
 		}
 
@@ -331,7 +330,7 @@ public class ProcessService {
 
 		// already done we dont want to change the delete date
 		if (isDeleteMarked(key)) {
-			LOGGER.info(Cst.ALREADY_DELETE_NO_ACTION);
+			LOGGER.info("Already deleted. No action");
 			return;
 		}
 
