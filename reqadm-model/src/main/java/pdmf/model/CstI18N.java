@@ -1,6 +1,6 @@
 package pdmf.model;
 
-public class Cst2 {
+public class CstI18N {
 	public static final String THIS_VERSION_IS_LOCKED = "THIS_VERSION_IS_LOCKED";
 	public static final String PGM_NAME = "PGM_NAME";
 	public static final String RECORD_CHANGED_BY_ANOTHER_USER = "RECORD_CHANGED_BY_ANOTHER_USER";
@@ -36,7 +36,7 @@ public class Cst2 {
 	public static final String OPERATION = "OPERATION";
 	public static final String OPERATION_SEQ = "OPERATION_SEQ";
 	public static final String DESCRIPTION = "DESCRIPTION";
-	public static final String DESCRIPTION_SHORT = "DESCRIPTION";	
+	public static final String DESCRIPTION_SHORT = "DESCRIPTION";
 	public static final String TARGET_VERSION_MUST_HAVE_A_VALUE = "TARGET_VERSION_MUST_HAVE_A_VALUE";
 	public static final String TARGET_VERSION_MUST_BE_AN_INTEGER = "TARGET_VERSION_MUST_BE_AN_INTEGER";
 	public static final String TARGET_VERSION_MUST_BE_BIGGER = "TARGET_VERSION_MUST_BE_BIGGER";
@@ -57,11 +57,26 @@ public class Cst2 {
 	public static final String MAINTAINANCE = "MAINTAINANCE";
 	public static final String WELCOME = "WELCOME";
 	public static final String INFO = "INFO";
-	public static final String TENANT = "TENANT";	
+	public static final String TENANT = "TENANT";
 	public static final String CREATED = "CREATED";
 	public static final String CHANGED = "CHANGED";
 	public static final String REMOVED = "REMOVED";
 	public static final String BY = "BY";
 	public static final String IN_VERSION = "IN_VERSION";
-	public static final String PARENT_IS_DELETE_NO_ACTION = "PARENT_IS_DELETE_NO_ACTION";	
+	public static final String PARENT_IS_DELETE_NO_ACTION = "PARENT_IS_DELETE_NO_ACTION";
+	public static final String NEW_VERSION = "NEW_VERSION";
+	public static final String DOES_NOT_EXIST = "DOES_NOT_EXIST";
+	public static final String NEW_PRODUCT = "NEW_PRODUCT";
+	public static final String SELECT_PRODUCT = "SELECT_PRODUCT";
+	public static final String SELECT_VERSION = "SELECT_VERSION";
+	public static final String WORK_WITH_PRODUCT = "WORK_WITH_PRODUCT";
+	public static final String EXPORT_AS_XML = "EXPORT_AS_XML";
+	public static final String NEW_TOPIC_FOR_PRODUCT = "NEW_TOPIC_FOR_PRODUCT";
+	public static final String WORK_WITH_TOPIC = "WORK_WITH_TOPIC";
+	public static final String NEW_PROCESS_FOR_TOPIC = "NEW_PROCESS_FOR_TOPIC";
+	public static final String WORK_WITH_PROCESS = "WORK_WITH_PROCESS";
+	public static final String NEW_OPERATION_FOR_PROCESS = "NEW_OPERATION_FOR_PROCESS";
+	public static final String WORK_WITH_OPERATION = "WORK_WITH_OPERATION";
+	public static final String LINES = "LINES";
+	public static final String OK = "OK";
 }

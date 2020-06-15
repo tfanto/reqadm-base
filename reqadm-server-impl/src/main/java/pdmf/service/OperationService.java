@@ -13,7 +13,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pdmf.model.Cst;
 import pdmf.model.OperationKey;
 import pdmf.model.OperationRec;
 import pdmf.model.ProcessKey;
@@ -240,12 +239,12 @@ public class OperationService {
 		}
 
 		if (isDeleteMarked(rec.key)) {
-			LOGGER.info(Cst.ALREADY_DELETE_NO_ACTION);
+			LOGGER.info("Already deleted. No action");
 			return null;
 		}
 
 		if (isParentDeleteMarked(rec.key)) {
-			LOGGER.info(Cst.PARENT_IS_DELETE_NO_ACTION);
+			LOGGER.info("Parent is deleted. No action");
 			return null;
 		}
 
@@ -349,7 +348,7 @@ public class OperationService {
 
 		// already done we dont want to change the delete date
 		if (isDeleteMarked(key)) {
-			LOGGER.info(Cst.ALREADY_DELETE_NO_ACTION);
+			LOGGER.info("Already deleted. No action.");
 			return;
 		}
 

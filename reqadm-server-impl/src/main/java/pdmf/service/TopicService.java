@@ -13,7 +13,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pdmf.model.Cst;
 import pdmf.model.ProductKey;
 import pdmf.model.TopicKey;
 import pdmf.model.TopicRec;
@@ -225,7 +224,7 @@ public class TopicService {
 		}
 
 		if (isParentDeleteMarked(topic.key)) {
-			LOGGER.info(Cst.PARENT_IS_DELETE_NO_ACTION);
+			LOGGER.info("Parent record is marked for delete. No Action.");
 			return null;
 		}
 
